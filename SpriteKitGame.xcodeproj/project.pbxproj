@@ -74,7 +74,7 @@
 		3E42944B2BAAE5270090AE9A /* backgroundMusic.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = backgroundMusic.mp3; sourceTree = "<group>"; };
 		3E42944C2BAAE5270090AE9A /* button_press.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = button_press.wav; sourceTree = "<group>"; };
 		3E42944F2BAAE6BF0090AE9A /* Latin_Industries.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = Latin_Industries.mp3; sourceTree = "<group>"; };
-		3E6D1E0D2B8E6AEC00C46021 /* Intro.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Intro.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		3E6D1E0D2B8E6AEC00C46021 /* SpriteKitGame.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SpriteKitGame.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3E6D1E102B8E6AEC00C46021 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		3E6D1E162B8E6AED00C46021 /* GameScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameScene.swift; sourceTree = "<group>"; };
 		3E6D1E182B8E6AED00C46021 /* GameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameViewController.swift; sourceTree = "<group>"; };
@@ -152,7 +152,7 @@
 		3E6D1E042B8E6AEC00C46021 = {
 			isa = PBXGroup;
 			children = (
-				3E6D1E0F2B8E6AEC00C46021 /* Intro */,
+				3E6D1E0F2B8E6AEC00C46021 /* SpriteKitGame */,
 				3E6D1E0E2B8E6AEC00C46021 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -160,12 +160,12 @@
 		3E6D1E0E2B8E6AEC00C46021 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				3E6D1E0D2B8E6AEC00C46021 /* Intro.app */,
+				3E6D1E0D2B8E6AEC00C46021 /* SpriteKitGame.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		3E6D1E0F2B8E6AEC00C46021 /* Intro */ = {
+		3E6D1E0F2B8E6AEC00C46021 /* SpriteKitGame */ = {
 			isa = PBXGroup;
 			children = (
 				3E6D1E102B8E6AEC00C46021 /* AppDelegate.swift */,
@@ -184,7 +184,7 @@
 				3E6D1E1D2B8E6AEE00C46021 /* Assets.xcassets */,
 				3E6D1E1F2B8E6AEE00C46021 /* LaunchScreen.storyboard */,
 			);
-			path = Intro;
+			path = SpriteKitGame;
 			sourceTree = "<group>";
 		};
 		3E91090D2B9CBBE7006CCAF1 /* scene.atlas */ = {
@@ -272,9 +272,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		3E6D1E0C2B8E6AEC00C46021 /* Intro */ = {
+		3E6D1E0C2B8E6AEC00C46021 /* SpriteKitGame */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 3E6D1E242B8E6AEE00C46021 /* Build configuration list for PBXNativeTarget "Intro" */;
+			buildConfigurationList = 3E6D1E242B8E6AEE00C46021 /* Build configuration list for PBXNativeTarget "SpriteKitGame" */;
 			buildPhases = (
 				3E6D1E092B8E6AEC00C46021 /* Sources */,
 				3E6D1E0A2B8E6AEC00C46021 /* Frameworks */,
@@ -284,9 +284,9 @@
 			);
 			dependencies = (
 			);
-			name = Intro;
+			name = SpriteKitGame;
 			productName = Intro;
-			productReference = 3E6D1E0D2B8E6AEC00C46021 /* Intro.app */;
+			productReference = 3E6D1E0D2B8E6AEC00C46021 /* SpriteKitGame.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -304,7 +304,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 3E6D1E082B8E6AEC00C46021 /* Build configuration list for PBXProject "Intro" */;
+			buildConfigurationList = 3E6D1E082B8E6AEC00C46021 /* Build configuration list for PBXProject "SpriteKitGame" */;
 			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -317,7 +317,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				3E6D1E0C2B8E6AEC00C46021 /* Intro */,
+				3E6D1E0C2B8E6AEC00C46021 /* SpriteKitGame */,
 			);
 		};
 /* End PBXProject section */
@@ -596,7 +596,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		3E6D1E082B8E6AEC00C46021 /* Build configuration list for PBXProject "Intro" */ = {
+		3E6D1E082B8E6AEC00C46021 /* Build configuration list for PBXProject "SpriteKitGame" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				3E6D1E222B8E6AEE00C46021 /* Debug */,
@@ -605,7 +605,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		3E6D1E242B8E6AEE00C46021 /* Build configuration list for PBXNativeTarget "Intro" */ = {
+		3E6D1E242B8E6AEE00C46021 /* Build configuration list for PBXNativeTarget "SpriteKitGame" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				3E6D1E252B8E6AEE00C46021 /* Debug */,
