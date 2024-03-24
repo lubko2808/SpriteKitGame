@@ -12,9 +12,7 @@ class MainViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        if Model.sharedInstance.sound == true  {
-            SKTAudio.sharedInstance().playBackgroundMusic(filename: "Latin_Industries.mp3")
-        }
+        SKTAudio.sharedInstance().playBackgroundMusic(filename: "Latin_Industries.mp3")
     }
     
     @IBAction func onPlayGameButtonTapped(_ sender: UIButton) {

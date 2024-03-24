@@ -7,7 +7,7 @@
 
 import UIKit
 import SpriteKit
-import GameplayKit
+import Combine
 
 class GameViewController: UIViewController {
     
@@ -17,6 +17,8 @@ class GameViewController: UIViewController {
     @IBOutlet weak var reloadGameButton: UIButton!
     @IBOutlet weak var loadingView: UIView!
     
+    var subs = Set<AnyCancellable>()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         loadingView.isHidden = false
@@ -25,7 +27,11 @@ class GameViewController: UIViewController {
         if let view = self.view as! SKView? {
             scene.anchorPoint = CGPoint(x: 0.0, y: 0.0)
             scene.scaleMode = .resizeFill
-            scene.gameViewControllerBridge = self
+            scene.showReloadGameButtonSubject
+                .sink { showReloadGameButton in
+                    self.reloadGameButton.isHidden = showReloadGameButton
+                }
+                .store(in: &subs)
             
             textureAtlas.preload {
                 DispatchQueue.main.async {

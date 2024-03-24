@@ -7,21 +7,21 @@
 
 import SpriteKit
 
+
+
 extension GameScene {
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         heroEmmiter.isHidden = false
         
-        guard gameover == 0 else { return }
-        
+        guard !isHeroDead else { return }
+                
         if tapToPlayTextLabel.isHidden == false { tapToPlayTextLabel.isHidden = true }
-        
         hero.physicsBody?.velocity = CGVector.zero
-        hero.physicsBody?.applyImpulse(CGVector(dx: 0, dy: 180))
+        let impulse = 0.2 * self.height
+        hero.physicsBody?.applyImpulse(CGVector(dx: 0, dy: impulse))
         
-        heroFlyTextures = SKTexture.heroFlyTextures
-        let heroFlyAnimation = SKAction.animate(with: heroFlyTextures, timePerFrame: 0.1)
-        let flyHero = SKAction.repeatForever(heroFlyAnimation)
-        hero.run(flyHero)
+        let heroAnimation = SKAction.animate(with: SKTexture.heroFlyTextures, timePerFrame: 0.1)
+        hero.run(.repeatForever(heroAnimation))
     }
 }

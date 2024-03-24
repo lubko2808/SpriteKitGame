@@ -7,15 +7,6 @@
 
 import SpriteKit
 
-enum CollisionType: UInt32 {
-    case heroGroup = 1
-    case groundGroup = 2
-    case coinGroup = 4
-    case redCoinGroup = 8
-    case objectGroup = 16
-    case shieldGroup = 32
-}
-
 extension GameScene {
     
     func didBegin(_ contact: SKPhysicsContact) {
@@ -24,112 +15,121 @@ extension GameScene {
         let bodyA = contact.bodyA
         let bodyB = contact.bodyB
         
-        let objectNode = contact.bodyA.categoryBitMask == objectGroup ? contact.bodyA.node : contact.bodyB.node
+        let obstacleNode = bodyA.categoryBitMask == CollisionType.obstacleGroup.rawValue ? nodeA : nodeB
         
         if score > highscore {
             highscore = score
+            UserDefaults.standard.setValue(highscore, forKey: "UserHighscore")
         }
-        UserDefaults.standard.setValue(highscore, forKey: "UserHighscore")
         
+        if bodyA.categoryBitMask == CollisionType.groundGroup.rawValue || bodyB.categoryBitMask == CollisionType.groundGroup.rawValue {
+            handleCollisionWithGround()
+        }
         
-        if contact.bodyA.categoryBitMask == objectGroup || contact.bodyB.categoryBitMask == objectGroup  {
+        if bodyA.categoryBitMask == CollisionType.obstacleGroup.rawValue || bodyB.categoryBitMask == CollisionType.obstacleGroup.rawValue  {
             hero.physicsBody?.velocity = CGVector(dx: 0, dy: 0)
             
-            if shieldBool == false {
-                
-                animationManager.shakeAndFlash(view: self.view!)
-                
-                if sound == true {
-                    run(electricGateDeadPreload)
-                }
-                
-                hero.physicsBody?.allowsRotation = false
-                
-                heroEmmiterObject.removeAllChildren()
-                coinObject.removeAllChildren()
-                redCoinObject.removeAllChildren()
-                groundObject.removeAllChildren()
-                movingObject.removeAllChildren()
-                shieldObject.removeAllChildren()
-                shieldItemObject.removeAllChildren()
-                
-                stopGame()
-                
-                [timerAddCoin, timerAddRedCoin, timerAddElectircGate, timerAddMine].forEach { $0.invalidate() }
-                
-                let heroDeathAnimation = SKAction.animate(with: SKTexture.heroDeadTextures, timePerFrame: 0.2)
-                hero.run(heroDeathAnimation)
-                
-                labelObject.addChild(highscoreLabel)
-                gameover = 1
-                
-                DispatchQueue.main.asyncAfter(deadline: .now() + 7 * 0.2) {
-                    self.scene?.isPaused = true
-                    self.heroObject.removeAllChildren()
-                    self.labelObject.addChild(self.highscoreTextLabel)
-                    self.gameViewControllerBridge.reloadGameButton.isHidden = false
-                    
-                    self.stageLabel.isHidden = true
-                    if self.score > self.highscore {
-                        self.highscore = self.score
-                    }
-                    self.highscoreLabel.isHidden = false
-                    self.highscoreTextLabel.isHidden = false
-                    self.highscoreLabel.text = "\(self.highscore)"
-                }
-                SKTAudio.sharedInstance().pauseBackgroundMusic() 
+            if isShieldActive == false {
+                handleFatalCollision()
             } else {
-                objectNode?.removeFromParent()
-                shieldObject.removeFromParent()
-                shieldBool = false
-                if sound == true { run(shieldOffPreload) }
+                obstacleNode.removeFromParent()
+                hero.children.forEach { if $0.name == NodeType.shield.rawValue { $0.removeFromParent() } }
+                isShieldActive = false
+                run(SKAction.shieldOffSound)
             }
         }
          
-        if  contact.bodyA.categoryBitMask == shieldGroup || contact.bodyB.categoryBitMask == shieldGroup {
-            let shieldNode = contact.bodyA.categoryBitMask == shieldGroup ? contact.bodyA.node : contact.bodyB.node
-        
-            if shieldBool == false {
-                if sound == true { run(pickCoinPreload) }
-                shieldNode?.removeFromParent()
-                addShield()
-                shieldBool = true
-            }
+        if  bodyA.categoryBitMask == CollisionType.shieldGroup.rawValue || bodyB.categoryBitMask == CollisionType.shieldGroup.rawValue {
+            let shieldNode = bodyA.categoryBitMask == CollisionType.shieldGroup.rawValue ? nodeA : nodeB
+            handleCollisionWithShield(shieldNode)
+
         }
         
-        if contact.bodyA.categoryBitMask == groundGroup || contact.bodyB.categoryBitMask == groundGroup {
-            guard gameover == 0 else { return }
-            heroEmmiter.isHidden = true
-            
-            heroRunTextures = SKTexture.heroRunTextures
-            
-            let heroRunAnimation = SKAction.animate(with: heroRunTextures, timePerFrame: 0.1)
-            let heroRun = SKAction.repeatForever(heroRunAnimation)
-            
-            hero.run(heroRun)
+        if bodyA.categoryBitMask == CollisionType.coinGroup.rawValue || bodyB.categoryBitMask == CollisionType.coinGroup.rawValue {
+            let coinNode = bodyA.categoryBitMask == CollisionType.coinGroup.rawValue ? nodeA : nodeB
+            handleCollisionWithCoin(coinNode)
         }
         
-        if contact.bodyA.categoryBitMask == coinGroup || contact.bodyB.categoryBitMask == coinGroup {
-            let coinNode = contact.bodyA.categoryBitMask == coinGroup ? contact.bodyA.node : contact.bodyB.node
-            if sound == true {
-                run(pickCoinPreload)
-            }
-            score += 1
-            scoreLabel.text = "\(score)"
-            coinNode?.removeFromParent()
-        }
-        
-        if contact.bodyA.categoryBitMask == redCoinGroup || contact.bodyB.categoryBitMask == redCoinGroup {
-            let redCoinNode = contact.bodyA.categoryBitMask == redCoinGroup ? contact.bodyA.node : contact.bodyB.node
-            if sound == true {
-                run(pickCoinPreload)
-            }
-            score += 2
-            scoreLabel.text = "\(score)"
-            redCoinNode?.removeFromParent()
+        if bodyA.categoryBitMask == CollisionType.redCoinGroup.rawValue || bodyB.categoryBitMask == CollisionType.redCoinGroup.rawValue {
+            let redCoinNode = bodyA.categoryBitMask == CollisionType.redCoinGroup.rawValue ? nodeA : nodeB
+            handleCollisionWithRedCoin(redCoinNode)
         }
         
     }
     
+    private func removeNodes() {
+        let nodes = self.children
+        nodes.forEach { node in
+            guard let nodeName = node.name, let _ = NodeType(rawValue: nodeName) else { return }
+            node.removeFromParent()
+        }
+        self.hero.removeAllChildren()
+    }
+    
+    private func handleFatalCollision() {
+        operationQueue.cancelAllOperations()
+        animationManager.shakeAndFlash(view: self.view!)
+        run(SKAction.deathFromElectricGateSound)
+        hero.physicsBody?.allowsRotation = false
+        
+        removeNodes()
+
+        isHeroDead = true
+        
+        let heroDeathAnimation = SKAction.animate(with: SKTexture.heroDeadTextures, timePerFrame: 0.2)
+        let completion = SKAction.run {
+            DispatchQueue.main.async {
+                self.hero.removeFromParent()
+                self.showReloadGameButtonSubject.send(false)
+                
+                if self.score > self.highscore {
+                    self.highscore = self.score
+                }
+                self.highscoreLabel.isHidden = false
+                self.highscoreTextLabel.isHidden = false
+                self.highscoreLabel.text = "\(self.highscore)"
+            }
+        }
+        background.speed = 0
+        hero.run(.sequence([heroDeathAnimation, completion]))
+        SKTAudio.sharedInstance().pauseBackgroundMusic()
+        
+        
+    }
+    
+    private func handleCollisionWithGround() {
+        guard !isHeroDead else { return }
+        heroEmmiter.isHidden = true
+        let heroAnimation = SKAction.animate(with: SKTexture.heroRunTextures, timePerFrame: 0.1)
+        hero.run(.repeatForever(heroAnimation))
+    }
+    
+    private func handleCollisionWithCoin(_ coinNode: SKNode) {
+        run(SKAction.pickCoinSound)
+        score += 1
+        scoreLabel.text = "\(score)"
+        coinNode.removeFromParent()
+    }
+    
+    private func handleCollisionWithRedCoin(_ redCoinNode: SKNode) {
+        run(SKAction.pickCoinSound)
+        score += 2
+        scoreLabel.text = "\(score)"
+        redCoinNode.removeFromParent()
+    }
+    
+    private func handleCollisionWithShield(_ shieldNode: SKNode) {
+        if isShieldActive == false {
+            run(SKAction.pickCoinSound)
+            shieldNode.removeFromParent()
+            addShield()
+            isShieldActive = true
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + 8) {
+                self.isShieldActive = false
+                self.heroShield.removeFromParent()
+            }
+        }
+    }
     
 }
